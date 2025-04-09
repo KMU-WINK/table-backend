@@ -34,4 +34,6 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     implementation("com.auth0:java-jwt:4.4.0")
+
+    implementation("io.awspring.cloud:spring-cloud-starter-aws:2.4.4")
 }

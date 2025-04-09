@@ -1,5 +1,16 @@
 package com.github.kmu_wink.domain.reservation.controller;
 
+import java.time.LocalDate;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.github.kmu_wink.common.api.ApiController;
 import com.github.kmu_wink.common.api.ApiResponse;
 import com.github.kmu_wink.common.security.oauth2.OAuth2GoogleUser;
@@ -7,14 +18,9 @@ import com.github.kmu_wink.domain.reservation.dto.request.ReservationRequest;
 import com.github.kmu_wink.domain.reservation.dto.response.MyReservationResponse;
 import com.github.kmu_wink.domain.reservation.dto.response.ReservationFindAllResponse;
 import com.github.kmu_wink.domain.reservation.service.ReservationService;
+
 import jakarta.validation.Valid;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @ApiController
 @RequiredArgsConstructor
@@ -46,6 +52,18 @@ public class ReservationController {
     ) {
 
         return ApiResponse.ok(reservationService.getWeeklyReservations(startDate, endDate));
+    }
+
+    @PostMapping("/reservations/{reservationId}/return")
+    public ApiResponse<Void> returnReservation(
+        @AuthenticationPrincipal OAuth2GoogleUser principal,
+        @PathVariable String reservationId,
+        @RequestPart MultipartFile file
+    ) {
+
+        reservationService.returnReservation(principal.getUser(), reservationId, file);
+
+        return ApiResponse.ok(null);
     }
 
     @GetMapping("/reservations/me")

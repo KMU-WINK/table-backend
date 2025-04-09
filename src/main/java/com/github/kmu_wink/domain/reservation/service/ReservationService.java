@@ -1,31 +1,39 @@
 package com.github.kmu_wink.domain.reservation.service;
 
-import com.github.kmu_wink.common.api.exception.ApiException;
+import static com.github.kmu_wink.domain.reservation.exception.ReservationExceptions.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.github.kmu_wink.common.external.aws.s3.S3Service;
 import com.github.kmu_wink.domain.reservation.constant.ReservationStatus;
 import com.github.kmu_wink.domain.reservation.dto.request.ReservationRequest;
 import com.github.kmu_wink.domain.reservation.dto.response.MyReservationResponse;
 import com.github.kmu_wink.domain.reservation.dto.response.MyReservationResponse.MyReservationItem;
 import com.github.kmu_wink.domain.reservation.dto.response.ReservationFindAllResponse;
 import com.github.kmu_wink.domain.reservation.dto.response.ReservationFindAllResponse.ReservationItem;
+import com.github.kmu_wink.domain.reservation.exception.ReservationException;
 import com.github.kmu_wink.domain.reservation.repository.ReservationRepository;
 import com.github.kmu_wink.domain.reservation.schema.Reservation;
 import com.github.kmu_wink.domain.user.exception.UserException;
 import com.github.kmu_wink.domain.user.exception.UserExceptions;
 import com.github.kmu_wink.domain.user.repository.UserRepository;
 import com.github.kmu_wink.domain.user.schema.User;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
+    private final S3Service s3Service;
 
     public void reserve(User user, ReservationRequest request) {
 
@@ -73,6 +81,30 @@ public class ReservationService {
                 .builder()
                 .reservations(reservations)
                 .build();
+    }
+
+    public void returnReservation(User user, String reservationId, MultipartFile file) {
+
+        Reservation reservation = reservationRepository.findById(reservationId)
+            .stream()
+            .peek(x -> {
+                if (!x.getParticipants().contains(user))
+                    throw ReservationException.of(NOT_PARTICIPANT_RESERVATION);
+            })
+            .peek(x -> {
+                if (x.getStatus().equals(ReservationStatus.RETURNED))
+                    throw ReservationException.of(RESERVATION_ALREADY_RETURNED);
+            })
+            .findFirst()
+            .orElseThrow();
+
+        String returnPictureUrl = s3Service.upload("reservation/return/" + reservationId, file);
+
+        reservation.setStatus(ReservationStatus.RETURNED);
+        reservation.setReturnPictureUrl(returnPictureUrl);
+        reservation.setReturnedAt(LocalDateTime.now());
+
+        reservationRepository.save(reservation);
     }
 
     public MyReservationResponse getReservationsByUser(User user) {
