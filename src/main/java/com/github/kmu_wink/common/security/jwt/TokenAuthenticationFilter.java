@@ -7,7 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.kmu_wink.common.api.ApiException;
+import com.github.kmu_wink.common.api.exception.ApiException;
 import com.github.kmu_wink.common.api.ApiResponse;
 
 import jakarta.annotation.Nonnull;
