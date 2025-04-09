@@ -3,7 +3,7 @@ package com.github.kmu_wink.domain.reservation.dto.response;
 import com.github.kmu_wink.domain.reservation.constant.ReservationStatus;
 import com.github.kmu_wink.domain.reservation.constant.Space;
 import com.github.kmu_wink.domain.reservation.schema.Reservation;
-import com.github.kmu_wink.domain.user.schema.User.Club;
+import com.github.kmu_wink.domain.user.constant.Club;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
