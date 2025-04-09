@@ -56,7 +56,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private void handleException(HttpServletResponse response, ApiException e) throws IOException {
 
-        ApiResponse<?> apiResponse = ApiResponse.error(e);
+        ApiResponse<?> apiResponse = ApiResponse.error(e.getMessage());
 
         String content = new ObjectMapper().writeValueAsString(apiResponse);
 

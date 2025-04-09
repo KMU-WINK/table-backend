@@ -2,8 +2,6 @@ package com.github.kmu_wink.common.api;
 
 import java.util.Map;
 
-import com.github.kmu_wink.common.api.exception.ApiException;
-
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -18,11 +16,6 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> ok(T content) {
 
         return new ApiResponse<>(true, null, content);
-    }
-
-    public static ApiResponse<Map<String, String>> error(ApiException exception) {
-
-        return error(exception.getMessage());
     }
 
     public static ApiResponse<Map<String, String>> error(String message) {

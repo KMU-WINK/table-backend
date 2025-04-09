@@ -52,7 +52,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(ApiException.class)
     public ApiResponse<?> apiException(ApiException e) {
 
-        return ApiResponse.error(e);
+        return ApiResponse.error(e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
