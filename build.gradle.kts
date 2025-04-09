@@ -4,7 +4,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
 }
 
-group = "com.github.son-daehyeon"
+group = "com.github.kmu-wink"
 
 java {
     toolchain {
@@ -28,8 +28,8 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
