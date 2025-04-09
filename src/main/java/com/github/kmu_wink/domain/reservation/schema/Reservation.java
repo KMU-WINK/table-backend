@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.time.LocalTime;
+import java.util.Set;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import com.github.kmu_wink.common.database.BaseSchema;
@@ -30,8 +31,9 @@ public class Reservation extends BaseSchema {
 	LocalTime startTime;
 	LocalTime endTime;
 	String useReason;
-	int peopleCount;
 	Space space;
+	@DBRef
+	Set<User> participants;
 	ReservationStatus status;
 	String returnPictureUrl;
 	LocalDateTime returnedAt;

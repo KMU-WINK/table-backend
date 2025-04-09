@@ -4,9 +4,12 @@ import com.github.kmu_wink.domain.reservation.constant.ReservationStatus;
 import com.github.kmu_wink.domain.reservation.constant.Space;
 import com.github.kmu_wink.domain.reservation.schema.Reservation;
 import com.github.kmu_wink.domain.user.constant.Club;
+import com.github.kmu_wink.domain.user.schema.User;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Builder;
 
 @Builder
@@ -21,7 +24,7 @@ public record MyReservationResponse(
             LocalDate date,
             LocalTime startTime,
             LocalTime endTime,
-            Integer peopleCount,
+            Set<String> participants,
             String useReason,
             ReservationStatus status,
             String returnPictureUrl
@@ -31,7 +34,14 @@ public record MyReservationResponse(
                     .reservationId(reservation.getId())
                     .space(reservation.getSpace())
                     .club(reservation.getClub())
-                    .peopleCount(reservation.getPeopleCount())
+                    .date(reservation.getDate())
+                    .startTime(reservation.getStartTime())
+                    .endTime(reservation.getEndTime())
+                    .participants(reservation.getParticipants()
+                            .stream()
+                            .map(User::getName)
+                            .collect(Collectors.toUnmodifiableSet())
+                    )
                     .useReason(reservation.getUseReason())
                     .status(reservation.getStatus())
                     .returnPictureUrl(reservation.getReturnPictureUrl())

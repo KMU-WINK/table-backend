@@ -3,6 +3,7 @@ package com.github.kmu_wink.domain.reservation.dto.request;
 import com.github.kmu_wink.domain.reservation.constant.Space;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public record ReservationRequest(
         Space space,
@@ -10,6 +11,6 @@ public record ReservationRequest(
         LocalTime startTime,
         LocalTime endTime,
         String useReason,
-        Integer peopleCount
+        List<String> participantIds
 ) {
 }

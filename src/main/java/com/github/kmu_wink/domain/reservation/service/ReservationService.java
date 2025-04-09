@@ -1,5 +1,6 @@
 package com.github.kmu_wink.domain.reservation.service;
 
+import com.github.kmu_wink.common.api.exception.ApiException;
 import com.github.kmu_wink.domain.reservation.constant.ReservationStatus;
 import com.github.kmu_wink.domain.reservation.dto.request.ReservationRequest;
 import com.github.kmu_wink.domain.reservation.dto.response.MyReservationResponse;
@@ -8,9 +9,15 @@ import com.github.kmu_wink.domain.reservation.dto.response.ReservationFindAllRes
 import com.github.kmu_wink.domain.reservation.dto.response.ReservationFindAllResponse.ReservationItem;
 import com.github.kmu_wink.domain.reservation.repository.ReservationRepository;
 import com.github.kmu_wink.domain.reservation.schema.Reservation;
+import com.github.kmu_wink.domain.user.exception.UserException;
+import com.github.kmu_wink.domain.user.exception.UserExceptions;
+import com.github.kmu_wink.domain.user.repository.UserRepository;
 import com.github.kmu_wink.domain.user.schema.User;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +25,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReservationService {
     private final ReservationRepository reservationRepository;
+    private final UserRepository userRepository;
 
     public void reserve(User user, ReservationRequest request) {
+
+        Set<User> participants = request.participantIds()
+                .stream()
+                .map(userId -> userRepository.findById(userId)
+                        .orElseThrow(() -> UserException.of(UserExceptions.USER_NOT_FOUND)))
+                .collect(Collectors.toUnmodifiableSet());
 
         Reservation reservation = Reservation.builder()
                 .user(user)
@@ -28,8 +42,8 @@ public class ReservationService {
                 .date(request.date())
                 .startTime(request.startTime())
                 .endTime(request.endTime())
-                .peopleCount(request.peopleCount())
                 .useReason(request.useReason())
+                .participants(participants)
                 .status(ReservationStatus.PENDING)
                 .build();
 
