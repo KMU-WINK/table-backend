@@ -7,7 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.kmu_wink.common.api.ApiException;
+import com.github.kmu_wink.common.api.exception.ApiException;
 import com.github.kmu_wink.common.api.ApiResponse;
 
 import jakarta.annotation.Nonnull;
@@ -56,7 +56,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private void handleException(HttpServletResponse response, ApiException e) throws IOException {
 
-        ApiResponse<?> apiResponse = ApiResponse.error(e);
+        ApiResponse<?> apiResponse = ApiResponse.error(e.getMessage());
 
         String content = new ObjectMapper().writeValueAsString(apiResponse);
 
