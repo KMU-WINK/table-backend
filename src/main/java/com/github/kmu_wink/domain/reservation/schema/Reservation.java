@@ -1,7 +1,11 @@
 package com.github.kmu_wink.domain.reservation.schema;
 
+import com.github.kmu_wink.domain.reservation.constant.ReservationStatus;
+import com.github.kmu_wink.domain.user.schema.User.Club;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import java.time.LocalTime;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import com.github.kmu_wink.common.database.BaseSchema;
@@ -21,12 +25,14 @@ public class Reservation extends BaseSchema {
 
 	@DBRef
 	User user;
-
-	LocalDateTime startTime;
-	LocalDateTime endTime;
-	String userReason;
+	Club club;
+	LocalDate date;
+	LocalTime startTime;
+	LocalTime endTime;
+	String useReason;
 	int peopleCount;
 	Space space;
+	ReservationStatus status;
 	String returnPictureUrl;
 	LocalDateTime returnedAt;
 }
