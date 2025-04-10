@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
+import com.github.kmu_wink.domain.user.dto.internal.UserDto;
 import com.github.kmu_wink.domain.user.dto.request.SignUpRequest;
 import com.github.kmu_wink.domain.user.dto.request.UpdateClubRequest;
 import com.github.kmu_wink.domain.user.dto.response.UserResponse;
@@ -25,7 +26,9 @@ public class UserService {
 
 	public UsersResponse getAllUser(String query) {
 
-		List<User> users = userRepository.findAllByNameContaining(query);
+		List<UserDto> users = userRepository.findAllByNameContaining(query).stream()
+			.map(UserDto::from)
+			.toList();
 
 		return UsersResponse.builder()
 			.users(users)
@@ -35,7 +38,7 @@ public class UserService {
 	public UserResponse getMyInfo(User user) {
 
 		return UserResponse.builder()
-			.user(user)
+			.user(UserDto.from(user))
 			.build();
 	}
 
@@ -51,7 +54,7 @@ public class UserService {
 		user = userRepository.save(user);
 
 		return UserResponse.builder()
-			.user(user)
+			.user(UserDto.from(user))
 			.build();
 	}
 
@@ -62,7 +65,7 @@ public class UserService {
 		user = userRepository.save(user);
 
 		return UserResponse.builder()
-			.user(user)
+			.user(UserDto.from(user))
 			.build();
 	}
 }

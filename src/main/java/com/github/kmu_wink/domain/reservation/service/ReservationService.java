@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.github.kmu_wink.common.external.aws.s3.S3Service;
 import com.github.kmu_wink.domain.reservation.constant.ReservationStatus;
+import com.github.kmu_wink.domain.reservation.dto.internal.ReservationDto;
 import com.github.kmu_wink.domain.reservation.dto.request.ReservationRequest;
 import com.github.kmu_wink.domain.reservation.dto.response.ReservationResponse;
 import com.github.kmu_wink.domain.reservation.dto.response.ReservationsResponse;
@@ -26,6 +27,7 @@ import com.github.kmu_wink.domain.user.repository.UserRepository;
 import com.github.kmu_wink.domain.user.schema.User;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +40,9 @@ public class ReservationService {
 
     public ReservationsResponse getMyReservations(User user) {
 
-        List<Reservation> reservations = reservationRepository.findAllByUser(user);
+        List<ReservationDto> reservations = reservationRepository.findAllByUser(user).stream()
+            .map(ReservationDto::from)
+            .toList();
 
         return ReservationsResponse.builder()
             .reservations(reservations)
@@ -47,7 +51,9 @@ public class ReservationService {
 
     public ReservationsResponse getDailyReservations(LocalDate date) {
 
-        List<Reservation> reservations = reservationRepository.findAllByDate(date);
+        List<ReservationDto> reservations = reservationRepository.findAllByDate(date).stream()
+            .map(ReservationDto::from)
+            .toList();
 
         return ReservationsResponse.builder()
             .reservations(reservations)
@@ -56,7 +62,9 @@ public class ReservationService {
 
     public ReservationsResponse getWeeklyReservations(LocalDate startDate, LocalDate endDate) {
 
-        List<Reservation> reservations = reservationRepository.findAllByDateBetween(startDate, endDate);
+        List<ReservationDto> reservations = reservationRepository.findAllByDateBetween(startDate, endDate).stream()
+            .map(ReservationDto::from)
+            .toList();
 
         return ReservationsResponse.builder()
             .reservations(reservations)
@@ -87,10 +95,10 @@ public class ReservationService {
         reservation = reservationRepository.save(reservation);
 
         return ReservationResponse.builder()
-            .reservation(reservation)
+            .reservation(ReservationDto.from(reservation))
             .build();
     }
-
+    
     public ReservationResponse returnReservation(User user, String reservationId, MultipartFile file) {
 
         Reservation reservation = reservationRepository.findById(reservationId)
@@ -115,7 +123,7 @@ public class ReservationService {
         reservation = reservationRepository.save(reservation);
 
         return ReservationResponse.builder()
-            .reservation(reservation)
+            .reservation(ReservationDto.from(reservation))
             .build();
     }
 }
