@@ -1,5 +1,7 @@
 package com.github.kmu_wink.common.api.exception;
 
+import java.util.Objects;
+
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -43,16 +45,25 @@ public class ApiExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResponse<?> methodArgumentNotValidException(MethodArgumentNotValidException e) {
 
-        if (e.getBindingResult().getFieldError() == null) {
+        if (Objects.nonNull(e.getBindingResult().getFieldError())) {
 
-            return ApiResponse.error(e.getMessage());
+            String field = e.getBindingResult().getFieldError().getField();
+            String message = e.getBindingResult().getFieldError().getDefaultMessage();
+            String errorMessage = String.format("%s은(는) %s", field, message);
+
+            return ApiResponse.error(errorMessage);
         }
 
-        String field = e.getBindingResult().getFieldError().getField();
-        String message = e.getBindingResult().getFieldError().getDefaultMessage();
-        String errorMessage = String.format("%s은(는) %s", field, message);
+        if (Objects.nonNull(e.getBindingResult().getGlobalError())) {
 
-        return ApiResponse.error(errorMessage);
+            String errorMessage = e.getBindingResult().getGlobalError().getDefaultMessage();
+
+            return ApiResponse.error(errorMessage);
+        }
+
+        System.out.println(e.getBindingResult().getGlobalError());
+
+        return ApiResponse.error(e.getMessage());
     }
 
     @ExceptionHandler(ApiException.class)

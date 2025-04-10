@@ -5,17 +5,33 @@ import java.time.LocalTime;
 import java.util.List;
 
 import com.github.kmu_wink.domain.reservation.constant.Space;
+import com.github.kmu_wink.domain.reservation.util.validation.MinutesDivisibleByTen;
+import com.github.kmu_wink.domain.reservation.util.validation.TimeRange;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+@TimeRange
 public record ReservationRequest(
 
+	@NotNull
 	List<String> participants,
 
+	@NotNull
 	Space space,
 
+	@NotNull
 	LocalDate date,
+
+	@NotNull
+	@MinutesDivisibleByTen
 	LocalTime startTime,
+
+	@NotNull
+	@MinutesDivisibleByTen
 	LocalTime endTime,
 
+	@NotBlank
 	String reason
 ) {
 }

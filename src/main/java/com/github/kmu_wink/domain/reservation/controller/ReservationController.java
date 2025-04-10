@@ -55,8 +55,8 @@ public class ReservationController {
 
     @PostMapping
     public ApiResponse<ReservationResponse> reserve(
-            @AuthenticationPrincipal OAuth2GoogleUser principal,
-            @Valid @RequestBody ReservationRequest request
+        @AuthenticationPrincipal OAuth2GoogleUser principal,
+        @RequestBody @Valid ReservationRequest request
     ) {
 
         return ApiResponse.ok(reservationService.reserve(principal.getUser(), request));
