@@ -29,7 +29,7 @@ public class ApiExceptionHandler {
         MissingServletRequestParameterException.class,
         MissingServletRequestPartException.class
     })
-    public ApiResponse<?> httpMessageNotReadableException(HttpMessageNotReadableException ignored) {
+    public ApiResponse<?> httpMessageNotReadableException(Exception ignored) {
 
         return ApiResponse.error("요청 데이터가 올바르지 않습니다.");
     }
