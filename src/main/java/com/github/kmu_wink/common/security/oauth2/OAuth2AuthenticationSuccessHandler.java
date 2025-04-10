@@ -33,7 +33,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         OAuth2GoogleUser oAuth2GoogleUser = (OAuth2GoogleUser) authentication.getPrincipal();
         String socialId = oAuth2GoogleUser.getSocialId();
 
-        boolean isNewUser = userRepository.existsBySocialId(socialId);
+        boolean isNewUser = !userRepository.existsBySocialId(socialId);
 
         User user = userRepository.findBySocialId(socialId)
             .orElseGet(() -> userRepository.save(
