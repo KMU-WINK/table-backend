@@ -2,13 +2,15 @@ package com.github.kmu_wink.domain.user.service;
 
 import static com.github.kmu_wink.domain.user.exception.UserExceptions.*;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
-import com.github.kmu_wink.common.security.oauth2.OAuth2GoogleUser;
 import com.github.kmu_wink.domain.user.dto.request.SignUpRequest;
+import com.github.kmu_wink.domain.user.dto.request.UpdateClubRequest;
 import com.github.kmu_wink.domain.user.dto.response.UserResponse;
+import com.github.kmu_wink.domain.user.dto.response.UsersResponse;
 import com.github.kmu_wink.domain.user.exception.UserException;
 import com.github.kmu_wink.domain.user.repository.UserRepository;
 import com.github.kmu_wink.domain.user.schema.User;
@@ -21,16 +23,23 @@ public class UserService {
 
 	private final UserRepository userRepository;
 
-	public UserResponse me(OAuth2GoogleUser oauthUser) {
+	public UsersResponse getAllUser(String query) {
 
-		return UserResponse.builder()
-			.user(oauthUser.getUser())
+		List<User> users = userRepository.findAllByNameContaining(query);
+
+		return UsersResponse.builder()
+			.users(users)
 			.build();
 	}
 
-	public UserResponse signUp(OAuth2GoogleUser oauthUser, SignUpRequest dto) {
+	public UserResponse getMyInfo(User user) {
 
-		User user = oauthUser.getUser();
+		return UserResponse.builder()
+			.user(user)
+			.build();
+	}
+
+	public UserResponse signUp(User user, SignUpRequest dto) {
 
 		if (Objects.nonNull(user.getName()) && Objects.nonNull(user.getClub())) {
 			throw UserException.of(ALREADY_SIGNUP);
