@@ -1,0 +1,40 @@
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force-response: true
+
+spring:
+  mvc:
+    log-resolved-exception: false
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+
+app:
+  jwt:
+    key: ${JWT_KEY}
+  oauth:
+    callback:
+      success: ${FRONTEND_HOSTNAME}/oauth/callback/success
+      failure: ${FRONTEND_HOSTNAME}/oauth/callback/failure
+  cloud:
+    aws:
+      region: ${AWS_REGION}
+      s3:
+        bucket: ${AWS_S3_BUCKET}
+      credential:
+        accessKey: ${AWS_ACCESS_KEY}
+        secretKey: ${AWS_SECRET_KEY}
