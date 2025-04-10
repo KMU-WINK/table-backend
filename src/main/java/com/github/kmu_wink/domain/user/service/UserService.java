@@ -45,4 +45,15 @@ public class UserService {
 			.user(user)
 			.build();
 	}
+
+	public UserResponse updateClub(User user, UpdateClubRequest request) {
+
+		user.setClub(request.club());
+
+		user = userRepository.save(user);
+
+		return UserResponse.builder()
+			.user(user)
+			.build();
+	}
 }

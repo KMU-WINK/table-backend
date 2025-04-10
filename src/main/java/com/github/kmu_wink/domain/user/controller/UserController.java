@@ -15,7 +15,7 @@ import com.github.kmu_wink.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@ApiController("/user")
+@ApiController("/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -35,6 +35,15 @@ public class UserController {
 		@RequestBody @Valid SignUpRequest request
 	) {
 
-		return ApiResponse.ok(userService.signUp(oauthUser, request));
+		return ApiResponse.ok(userService.signUp(oauthUser.getUser(), request));
+	}
+
+	@PutMapping("/club")
+	public ApiResponse<UserResponse> updateClub(
+		@AuthenticationPrincipal OAuth2GoogleUser oauthUser,
+		@RequestBody @Valid UpdateClubRequest request
+	) {
+
+		return ApiResponse.ok(userService.updateClub(oauthUser.getUser(), request));
 	}
 }
