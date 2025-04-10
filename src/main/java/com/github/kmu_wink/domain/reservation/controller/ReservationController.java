@@ -15,68 +15,60 @@ import com.github.kmu_wink.common.api.ApiController;
 import com.github.kmu_wink.common.api.ApiResponse;
 import com.github.kmu_wink.common.security.oauth2.OAuth2GoogleUser;
 import com.github.kmu_wink.domain.reservation.dto.request.ReservationRequest;
-import com.github.kmu_wink.domain.reservation.dto.response.MyReservationResponse;
-import com.github.kmu_wink.domain.reservation.dto.response.ReservationFindAllResponse;
+import com.github.kmu_wink.domain.reservation.dto.response.ReservationResponse;
+import com.github.kmu_wink.domain.reservation.dto.response.ReservationsResponse;
 import com.github.kmu_wink.domain.reservation.service.ReservationService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@ApiController
+@ApiController("/reservations")
 @RequiredArgsConstructor
 public class ReservationController {
+
     private final ReservationService reservationService;
 
-    @PostMapping("/reservations")
-    public ApiResponse<Void> reserve(
-            @AuthenticationPrincipal OAuth2GoogleUser principal,
-            @Valid @RequestBody ReservationRequest request
+    @GetMapping("/me")
+    public ApiResponse<ReservationsResponse> getMyReservations(
+        @AuthenticationPrincipal OAuth2GoogleUser principal
     ) {
 
-        reservationService.reserve(principal.getUser(), request);
-        return ApiResponse.ok(null);
+        return ApiResponse.ok(reservationService.getMyReservations(principal.getUser()));
     }
 
-    @GetMapping("/reservations/daily")
-    public ApiResponse<ReservationFindAllResponse> getDailyReservations(
-            @RequestParam LocalDate date
+    @GetMapping("/daily")
+    public ApiResponse<ReservationsResponse> getDailyReservations(
+        @RequestParam LocalDate date
     ) {
 
         return ApiResponse.ok(reservationService.getDailyReservations(date));
     }
 
-    @GetMapping("/reservations/weekly")
-    public ApiResponse<ReservationFindAllResponse> getWeeklyReservations(
-            @RequestParam LocalDate startDate,
-            @RequestParam LocalDate endDate
+    @GetMapping("/weekly")
+    public ApiResponse<ReservationsResponse> getWeeklyReservations(
+        @RequestParam LocalDate startDate,
+        @RequestParam LocalDate endDate
     ) {
 
         return ApiResponse.ok(reservationService.getWeeklyReservations(startDate, endDate));
     }
 
-    @PostMapping("/reservations/{reservationId}/return")
-    public ApiResponse<Void> returnReservation(
+    @PostMapping
+    public ApiResponse<ReservationResponse> reserve(
+            @AuthenticationPrincipal OAuth2GoogleUser principal,
+            @Valid @RequestBody ReservationRequest request
+    ) {
+
+        return ApiResponse.ok(reservationService.reserve(principal.getUser(), request));
+    }
+
+    @PostMapping("/{reservationId}/return")
+    public ApiResponse<ReservationResponse> returnReservation(
         @AuthenticationPrincipal OAuth2GoogleUser principal,
         @PathVariable String reservationId,
         @RequestPart MultipartFile file
     ) {
 
-        reservationService.returnReservation(principal.getUser(), reservationId, file);
-
-        return ApiResponse.ok(null);
-    }
-
-    @GetMapping("/reservations/me")
-    public ApiResponse<MyReservationResponse> getMyReservations(
-            @AuthenticationPrincipal OAuth2GoogleUser principal
-    ) {
-
-        return ApiResponse.ok(reservationService.getReservationsByUser(principal.getUser()));
-    }
-
-    @GetMapping("/reservations/current")
-    public ApiResponse<ReservationFindAllResponse> getCurrentReservations() {
-
-        return ApiResponse.ok(reservationService.getCurrentReservations());
+        return ApiResponse.ok(reservationService.returnReservation(principal.getUser(), reservationId, file));
     }
 }

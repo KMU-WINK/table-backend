@@ -1,18 +1,21 @@
 package com.github.kmu_wink.domain.reservation.schema;
 
-import com.github.kmu_wink.domain.reservation.constant.ReservationStatus;
-import com.github.kmu_wink.domain.user.constant.Club;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import java.time.LocalTime;
 import java.util.Set;
+
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
+import net.minidev.json.annotate.JsonIgnore;
+
 import com.github.kmu_wink.common.database.BaseSchema;
+import com.github.kmu_wink.domain.reservation.constant.ReservationStatus;
 import com.github.kmu_wink.domain.reservation.constant.Space;
+import com.github.kmu_wink.domain.user.constant.Club;
 import com.github.kmu_wink.domain.user.schema.User;
 
+import jakarta.annotation.Nullable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -25,16 +28,27 @@ import lombok.experimental.SuperBuilder;
 public class Reservation extends BaseSchema {
 
 	@DBRef
+	@JsonIgnore
 	User user;
+
+	@DBRef
+	Set<User> participants;
+
 	Club club;
+
+	Space space;
+
 	LocalDate date;
 	LocalTime startTime;
 	LocalTime endTime;
-	String useReason;
-	Space space;
-	@DBRef
-	Set<User> participants;
+
+	String reason;
+
 	ReservationStatus status;
-	String returnPictureUrl;
+
+	@Nullable
+	String returnPicture;
+
+	@Nullable
 	LocalDateTime returnedAt;
 }
