@@ -8,9 +8,12 @@ import lombok.Data;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "app.oauth")
-public class OauthProperty {
+@ConfigurationProperties(prefix = "app.oauth.callback")
+public class OauthCallbackProperty {
 
 	@NotBlank
-	private String callback;
+	private String success;
+
+	@NotBlank
+	private String failure;
 }

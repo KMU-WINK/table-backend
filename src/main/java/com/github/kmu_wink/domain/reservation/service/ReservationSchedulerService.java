@@ -19,7 +19,7 @@ public class ReservationSchedulerService {
 
     private final ReservationRepository reservationRepository;
 
-    private static final Set<ReservationStatus> UPDATE_STATUS = Set.of(PENDING, IN_USE);
+    private final Set<ReservationStatus> UPDATE_STATUS = Set.of(PENDING, IN_USE);
 
     @Scheduled(cron = "0 * * * * *")
     public void updateReservationStatus() {

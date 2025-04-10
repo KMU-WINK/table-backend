@@ -1,12 +1,13 @@
 package com.github.kmu_wink.common.security.oauth2;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.github.kmu_wink.common.property.OauthProperty;
+import com.github.kmu_wink.common.property.OauthCallbackProperty;
 import com.github.kmu_wink.common.security.jwt.TokenProvider;
 import com.github.kmu_wink.domain.user.repository.UserRepository;
 import com.github.kmu_wink.domain.user.schema.User;
@@ -22,7 +23,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final UserRepository userRepository;
 
     private final TokenProvider tokenProvider;
-    private final OauthProperty oauthProperty;
+    private final OauthCallbackProperty oauthCallbackProperty;
+
+    private final String KOOKMIN_EMAIL_REGEX = ".*@kookmin\\.ac\\.kr$";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -36,17 +39,28 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         boolean isNewUser = !userRepository.existsBySocialId(socialId);
 
         User user = userRepository.findBySocialId(socialId)
-            .orElseGet(() -> userRepository.save(
+            .orElseGet(() -> {
+
+                String email = oAuth2GoogleUser.getEmail();
+
+                if (!email.matches(KOOKMIN_EMAIL_REGEX)) return null;
+
+                return userRepository.save(
                     User.builder()
                         .socialId(socialId)
                         .name(null)
-                        .email(oAuth2GoogleUser.getEmail())
+                        .email(email)
                         .club(null)
                         .build()
-                )
-            );
+                );
+            });
+
+        if (Objects.isNull(user)) {
+            getRedirectStrategy().sendRedirect(request, response, String.format("%s?code=NOT_KOOKMIN_EMAIL", oauthCallbackProperty.getFailure()));
+            return;
+        }
 
         String accessToken = tokenProvider.generateToken(user);
-        getRedirectStrategy().sendRedirect(request, response, String.format("%s?token=%s&isNewUser=%s", oauthProperty.getCallback(), accessToken, isNewUser));
+        getRedirectStrategy().sendRedirect(request, response, String.format("%s?token=%s&isNewUser=%s", oauthCallbackProperty.getSuccess(), accessToken, isNewUser));
     }
 }
