@@ -71,7 +71,13 @@ public class ReservationService {
             .build();
     }
 
+    @Synchronized
     public ReservationResponse reserve(User user, ReservationRequest dto) {
+
+        reservationRepository.findByDuplicated(dto.space(), dto.date(), dto.endTime(), dto.startTime())
+            .ifPresent((ignored) -> {
+                throw ReservationException.of(DUPLICATE_RESERVATION);
+            });
 
         Set<User> participants = Stream.of(dto.participants(), List.of(user.getId()))
             .flatMap(List::stream)
@@ -98,7 +104,7 @@ public class ReservationService {
             .reservation(ReservationDto.from(reservation))
             .build();
     }
-    
+
     public ReservationResponse returnReservation(User user, String reservationId, MultipartFile file) {
 
         Reservation reservation = reservationRepository.findById(reservationId)
