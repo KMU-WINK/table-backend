@@ -7,8 +7,7 @@ import java.util.Set;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
-import net.minidev.json.annotate.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.kmu_wink.common.database.BaseSchema;
 import com.github.kmu_wink.domain.reservation.constant.ReservationStatus;
 import com.github.kmu_wink.domain.reservation.constant.Space;

@@ -1,7 +1,6 @@
 package com.github.kmu_wink.domain.user.schema;
 
-import net.minidev.json.annotate.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.kmu_wink.common.database.BaseSchema;
 import com.github.kmu_wink.domain.user.constant.Club;
 
