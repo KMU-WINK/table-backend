@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import com.github.kmu_wink.domain.reservation.constant.Space;
+import com.github.kmu_wink.domain.reservation.util.validation.FutureDate;
 import com.github.kmu_wink.domain.reservation.util.validation.MinutesDivisibleByTen;
 import com.github.kmu_wink.domain.reservation.util.validation.ReservationTime;
 import com.github.kmu_wink.domain.reservation.util.validation.TimeRange;
@@ -13,6 +14,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @TimeRange
+@FutureDate
 public record ReservationRequest(
 
 	@NotNull
