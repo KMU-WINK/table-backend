@@ -13,6 +13,11 @@ public class ApiResponse<T> {
     private final String message;
     private final T content;
 
+    public static <T> ApiResponse<T> ok() {
+
+        return ok(null);
+    }
+
     public static <T> ApiResponse<T> ok(T content) {
 
         return new ApiResponse<>(true, null, content);

@@ -28,8 +28,8 @@ app:
     key: ${JWT_KEY}
   oauth:
     callback:
-      success: ${FRONTEND_HOSTNAME}/oauth/callback/success
-      failure: ${FRONTEND_HOSTNAME}/oauth/callback/failure
+      success: ${FRONTEND_HOSTNAME}/auth/oauth/callback/success
+      failure: ${FRONTEND_HOSTNAME}/auth/oauth/callback/failure
   cloud:
     aws:
       region: ${AWS_REGION}

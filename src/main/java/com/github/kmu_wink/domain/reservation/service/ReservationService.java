@@ -105,6 +105,24 @@ public class ReservationService {
             .build();
     }
 
+    public void cancelReservation(User user, String reservationId) {
+
+        Reservation reservation = reservationRepository.findById(reservationId)
+            .stream()
+            .peek(x -> {
+                if (!x.getParticipants().contains(user))
+                    throw ReservationException.of(NOT_PARTICIPANT_RESERVATION);
+            })
+            .peek(x -> {
+                if (!x.getStatus().equals(ReservationStatus.PENDING))
+                    throw ReservationException.of(RESERVATION_ALREADY_STARTED);
+            })
+            .findFirst()
+            .orElseThrow();
+
+        reservationRepository.delete(reservation);
+    }
+
     public ReservationResponse returnReservation(User user, String reservationId, MultipartFile file) {
 
         Reservation reservation = reservationRepository.findById(reservationId)

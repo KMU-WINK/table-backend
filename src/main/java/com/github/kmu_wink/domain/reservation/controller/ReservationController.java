@@ -3,6 +3,7 @@ package com.github.kmu_wink.domain.reservation.controller;
 import java.time.LocalDate;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,6 +61,17 @@ public class ReservationController {
     ) {
 
         return ApiResponse.ok(reservationService.reserve(principal.getUser(), request));
+    }
+
+    @DeleteMapping("/{reservationId}")
+    public ApiResponse<ReservationResponse> cancelReservation(
+        @AuthenticationPrincipal OAuth2GoogleUser principal,
+        @PathVariable String reservationId
+    ) {
+
+        reservationService.cancelReservation(principal.getUser(), reservationId);
+
+        return ApiResponse.ok();
     }
 
     @PostMapping("/{reservationId}/return")
