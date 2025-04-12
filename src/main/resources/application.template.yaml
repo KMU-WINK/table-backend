@@ -22,7 +22,6 @@ spring:
             scope:
               - email
               - profile
-            redirect-uri: ${GOOGLE_REDIRECT_URI}
 
 app:
   jwt:
