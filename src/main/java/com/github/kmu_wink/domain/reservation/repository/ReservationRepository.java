@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,7 +22,7 @@ public interface ReservationRepository extends MongoRepository<Reservation, Stri
     @Query("{ 'space': ?0, 'date': ?1, 'status': { $ne: 'RETURNED' }, 'startTime': { $lt: ?2 }, 'endTime': { $gt: ?3 } }")
     Optional<Reservation> findByDuplicated(Space space, LocalDate date, LocalTime endTime, LocalTime startTime);
 
-    List<Reservation> findAllByUser(User user);
+    List<Reservation> findAllByUser(User user, Sort sort);
     List<Reservation> findAllByDate(LocalDate date);
     List<Reservation> findAllByDateBetween(LocalDate startDate, LocalDate endDate);
     Set<Reservation> findAllByStatusInAndDate(Set<ReservationStatus> statuses, LocalDate date);
