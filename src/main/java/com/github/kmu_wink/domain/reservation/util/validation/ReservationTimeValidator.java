@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidatorContext;
 public class ReservationTimeValidator implements ConstraintValidator<ReservationTime, LocalTime> {
 
 	private final LocalTime MINIMUM_TIME = LocalTime.of(9, 0);
-	private final LocalTime MAXIMUM_TIME = LocalTime.of(23, 59);
+	private final LocalTime MAXIMUM_TIME = LocalTime.of(23, 0);
 
 	@Override
 	public boolean isValid(LocalTime value, ConstraintValidatorContext context) {
