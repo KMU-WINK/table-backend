@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.github.kmu_wink.common.external.aws.s3.S3Service;
@@ -94,6 +95,7 @@ public class ReservationService {
     }
 
     @Synchronized
+    @Transactional
     public ReservationResponse reserve(User user, ReservationRequest dto) {
 
         reservationRepository.findByDuplicated(dto.space(), dto.date(), dto.endTime(), dto.startTime())

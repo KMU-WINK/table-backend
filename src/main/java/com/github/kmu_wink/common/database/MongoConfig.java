@@ -5,6 +5,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
@@ -37,5 +38,11 @@ public class MongoConfig {
 		converter.setTypeMapper(new DefaultMongoTypeMapper(null));
 
 		return converter;
+	}
+
+	@Bean
+	public MongoTransactionManager transactionManager(MongoDatabaseFactory mongoDatabaseFactory) {
+
+		return new MongoTransactionManager(mongoDatabaseFactory);
 	}
 }

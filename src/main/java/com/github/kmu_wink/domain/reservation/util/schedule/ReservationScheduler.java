@@ -14,6 +14,7 @@ import com.github.kmu_wink.domain.reservation.schema.Reservation;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class ReservationScheduler {
     private final Set<ReservationStatus> UPDATE_STATUS = Set.of(PENDING, IN_USE);
 
     @PostConstruct
+    @Transactional
     public void onStartUp() {
 
         LocalDateTime now = LocalDateTime.now();
@@ -33,6 +35,7 @@ public class ReservationScheduler {
     }
 
     @Scheduled(cron = "0 * * * * *")
+    @Transactional
     public void cron() {
 
         LocalDateTime now = LocalDateTime.now();
@@ -41,7 +44,8 @@ public class ReservationScheduler {
             .forEach((reservation) -> updateReservationStatus(reservation, now));
     }
 
-    private void updateReservationStatus(Reservation reservation, LocalDateTime current) {
+    @Transactional
+    protected void updateReservationStatus(Reservation reservation, LocalDateTime current) {
 
         LocalDateTime startTime = LocalDateTime.of(reservation.getDate(), reservation.getStartTime());
         LocalDateTime endTime = LocalDateTime.of(reservation.getDate(), reservation.getEndTime());
