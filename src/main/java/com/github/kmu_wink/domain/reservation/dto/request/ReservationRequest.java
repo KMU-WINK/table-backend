@@ -4,6 +4,7 @@ import com.github.kmu_wink.domain.reservation.constant.Space;
 import com.github.kmu_wink.domain.reservation.util.validation.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,6 +15,7 @@ import java.util.List;
 public record ReservationRequest(
 
         @NotNull
+        @Size(min = 3, max = 6)
         List<String> participants,
 
         @NotNull
