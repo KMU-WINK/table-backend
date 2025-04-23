@@ -1,22 +1,5 @@
 package com.github.kmu_wink.domain.reservation.service;
 
-import static com.github.kmu_wink.domain.reservation.exception.ReservationExceptions.*;
-import static com.github.kmu_wink.domain.user.exception.UserExceptions.*;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.github.kmu_wink.common.external.aws.s3.S3Service;
 import com.github.kmu_wink.domain.reservation.constant.ReservationStatus;
 import com.github.kmu_wink.domain.reservation.dto.internal.ReservationDto;
@@ -29,9 +12,27 @@ import com.github.kmu_wink.domain.reservation.schema.Reservation;
 import com.github.kmu_wink.domain.user.exception.UserException;
 import com.github.kmu_wink.domain.user.repository.UserRepository;
 import com.github.kmu_wink.domain.user.schema.User;
-
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.github.kmu_wink.domain.reservation.exception.ReservationExceptions.DUPLICATE_RESERVATION;
+import static com.github.kmu_wink.domain.reservation.exception.ReservationExceptions.NOT_PARTICIPANT_RESERVATION;
+import static com.github.kmu_wink.domain.reservation.exception.ReservationExceptions.RESERVATION_ALREADY_RETURNED;
+import static com.github.kmu_wink.domain.reservation.exception.ReservationExceptions.RESERVATION_ALREADY_STARTED;
+import static com.github.kmu_wink.domain.user.exception.UserExceptions.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -156,17 +157,20 @@ public class ReservationService {
                         throw ReservationException.of(NOT_PARTICIPANT_RESERVATION);
                 })
                 .peek(x -> {
-                    if (x.getStatus().equals(ReservationStatus.RETURNED))
+                    if (x.getReturnPicture() != null)
                         throw ReservationException.of(RESERVATION_ALREADY_RETURNED);
                 })
                 .findFirst()
                 .orElseThrow();
 
         String returnPictureUrl = s3Service.upload("reservation/return/" + reservationId, file);
-
-        reservation.setStatus(ReservationStatus.RETURNED);
         reservation.setReturnPicture(returnPictureUrl);
-        reservation.setReturnedAt(LocalDateTime.now());
+
+        if (reservation.getStatus() != ReservationStatus.RETURNED) {
+
+            reservation.setStatus(ReservationStatus.RETURNED);
+            reservation.setReturnedAt(LocalDateTime.now());
+        }
 
         reservation = reservationRepository.save(reservation);
 
